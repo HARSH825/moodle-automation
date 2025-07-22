@@ -13,14 +13,14 @@ export default function Generate() {
   const [status, setStatus] = useState("");
   const [toast, setToast] = useState({ show: false, message: "", type: "info" });
   const navigate = useNavigate();
-
+    const be_url ="http://localhost:4000";
   async function handleGenerate() {
     setLoading(true);
     setToast({ show: false });
     try {
       const username = localStorage.getItem("username");
       const userDetails = {}; // name, rollNo, etc. if needed
-      const res = await axios.post("/api/v1/genDoc/generate", {
+      const res = await axios.post(`${be_url}/api/v1/genDoc/generate`, {
         username,
         selectedAssignments,
         userDetails,
@@ -37,7 +37,7 @@ export default function Generate() {
   function pollStatus(jobId) {
     const interval = setInterval(async () => {
       try {
-        const res = await axios.get(`/api/v1/genDoc/status/${jobId}`);
+        const res = await axios.get(`${be_url}/api/v1/genDoc/status/${jobId}`);
         setStatus(res.data.job.status);
         setProgress(res.data.job.progress || 0);
         if (res.data.job.status === "completed" || res.data.job.status === "failed") {

@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-
+const be_url = "http://localhost:4000";
 export default function Downloads() {
   const [docs, setDocs] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const username = localStorage.getItem("username");
-    axios.get(`/api/v1/genDoc/downloads?username=${username}`).then(res => {
+    axios.get(`${be_url}/api/v1/genDoc/downloads?username=${username}`).then(res => {
       setDocs(res.data.docs || []);
       setLoading(false);
     }).catch(() => setLoading(false));

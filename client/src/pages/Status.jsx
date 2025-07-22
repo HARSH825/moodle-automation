@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import StatusModal from "../components/StatusModal";
 import axios from "axios";
 
+const be_url = "http://localhost:4000";
 export default function Status() {
   const [searchParams] = useSearchParams();
   const jobId = searchParams.get("jobId") || "";
@@ -13,7 +14,7 @@ export default function Status() {
     if (!jobId) return;
     const interval = setInterval(async () => {
       try {
-        const res = await axios.get(`/api/v1/genDoc/status/${jobId}`);
+        const res = await axios.get(`${be_url}/api/v1/genDoc/status/${jobId}`);
         setStatus(res.data.job.status);
         setProgress(res.data.job.progress || 0);
         if (["completed", "failed"].includes(res.data.job.status)) {

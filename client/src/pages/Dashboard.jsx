@@ -3,6 +3,7 @@ import axios from "axios";
 import Dashboard from "../components/Dashboard";
 import CoursesList from "../components/CoursesList";
 import Toast from "../components/Toast";
+const be_url = "http://localhost:4000";
 
 export default function DashboardPage() {
   const [courses, setCourses] = useState([]);
@@ -12,7 +13,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     const username = localStorage.getItem("username");
-    axios.get(`/api/v1/loginfetch?username=${username}`).then(res => {
+    axios.get(`${be_url}/api/v1/loginfetch?username=${username}`).then(res => {
       setCourses(res.data.courses || []);
       setLoading(false);
     }).catch(() => {
@@ -23,7 +24,7 @@ export default function DashboardPage() {
 
   function handleStartCheck() {
     const username = localStorage.getItem("username");
-    axios.post("/api/v1/checkSub/start", {
+    axios.post(`${be_url}/api/v1/checkSub/start`, {
       username,
       selectedCourseIds: selectedIds
     }).then(() => {

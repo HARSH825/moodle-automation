@@ -5,6 +5,7 @@ import DocGeneration from "../components/DocGeneration";
 import StatusModal from "../components/StatusModal";
 import Toast from "../components/Toast";
 
+const be_url = "http://localhost:4000";
 const MAX_ASSIGNMENTS = 5;
 
 export default function Assignments() {
@@ -19,7 +20,7 @@ export default function Assignments() {
   useEffect(() => {
     // Fetch assignments from API; example static username
     const username = localStorage.getItem("username");
-    axios.get(`/api/v1/checkSub/assignments/${username}`).then(res => {
+    axios.get(`${be_url}/api/v1/checkSub/assignments/${username}`).then(res => {
       setAssignments(
         Object.values(res.data.nonSubmittedAssignments)
           .flatMap(course => course.assignments || [])
@@ -35,7 +36,7 @@ export default function Assignments() {
     setLoading(true);
     setToast({ show: false, message: "" });
     const username = localStorage.getItem("username");
-    axios.post(`/api/v1/genDoc/generate`, {
+    axios.post(`${be_url}/api/v1/genDoc/generate`, {
       username,
       selectedAssignments: assignments.filter(a => selectedIds.includes(a.id)),
       userDetails: {} // add name/rollNo if required
@@ -51,7 +52,7 @@ export default function Assignments() {
 
   function pollStatus(jobId) {
     let interval = setInterval(() => {
-      axios.get(`/api/v1/genDoc/status/${jobId}`).then(res => {
+      axios.get(`${be_url}/api/v1/genDoc/status/${jobId}`).then(res => {
         setProgress(res.data.job.progress || 0);
         setStatus(res.data.job.status);
         if (["completed", "failed"].includes(res.data.job.status)) {

@@ -1,12 +1,14 @@
 "use client"
 
+import { useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
+import { Progress } from "@/components/ui/progress"
 import { Separator } from "@/components/ui/separator"
-import { FileText, BookOpen, Download, Loader2, ExternalLink, Paperclip } from "lucide-react"
+import { FileText, BookOpen, Download, Loader2, ExternalLink, Paperclip, CheckCircle } from "lucide-react"
 import type { AppState, Assignment } from "@/types"
 import { useApi } from "@/hooks/use-api"
 
@@ -16,7 +18,34 @@ interface AssignmentSelectionStepProps {
 }
 
 export function AssignmentSelectionStep({ appState, updateState }: AssignmentSelectionStepProps) {
-  const { generateDocuments } = useApi()
+  const { generateDocuments, getDocumentJobStatus } = useApi()
+
+  // Polling for document generation status
+  useEffect(() => {
+    if (!appState.docJobId || appState.docProgress >= 100) return
+
+    const interval = setInterval(async () => {
+      try {
+        const data = await getDocumentJobStatus(appState.docJobId)
+        if (data.success) {
+          updateState({ docProgress: data.job.progress || 0 })
+          if (data.job.status === "completed") {
+            updateState({
+              docProgress: 100,
+              success: "Documents generated successfully!",
+              loading: false,
+              // Store the generated files data
+              generatedFiles: data.job.result?.generatedFiles || [],
+            })
+          }
+        }
+      } catch (err) {
+        console.error("Error checking document job status:", err)
+      }
+    }, 2000)
+
+    return () => clearInterval(interval)
+  }, [appState.docJobId, appState.docProgress])
 
   const handleDocumentGeneration = async () => {
     if (appState.selectedAssignments.length === 0) {
@@ -29,29 +58,25 @@ export function AssignmentSelectionStep({ appState, updateState }: AssignmentSel
       return
     }
 
-    updateState({ loading: true, error: "" })
+    updateState({ loading: true, error: "", success: "" })
 
     try {
-      console.log("Starting document generation...") // Debug log
-
       const data = await generateDocuments({
         username: appState.credentials.username,
         selectedAssignments: appState.selectedAssignments,
         userDetails: {},
       })
 
-      console.log("Generate response:", data) // Debug log
-
       if (data.success) {
-        console.log("Redirecting to generate page with jobId:", data.jobId) // Debug log
-
-        // Use window.location for a hard redirect
-        window.location.href = `/generate?jobId=${data.jobId}&username=${appState.credentials.username}`
+        updateState({
+          docJobId: data.jobId,
+          success: `Generating documents for ${appState.selectedAssignments.length} assignments...`,
+          docProgress: 0,
+        })
       } else {
         updateState({ error: data.error || "Failed to start document generation", loading: false })
       }
     } catch (err) {
-      console.error("Generation error:", err) // Debug log
       updateState({ error: "Network error occurred", loading: false })
     }
   }
@@ -72,6 +97,31 @@ export function AssignmentSelectionStep({ appState, updateState }: AssignmentSel
     }
   }
 
+  const handleDownload = async (downloadUrl: string, fileName: string) => {
+    try {
+      const response = await fetch(downloadUrl)
+      const blob = await response.blob()
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement("a")
+      a.href = url
+      a.download = fileName
+      document.body.appendChild(a)
+      a.click()
+      window.URL.revokeObjectURL(url)
+      document.body.removeChild(a)
+    } catch (err) {
+      console.error("Download failed:", err)
+    }
+  }
+
+  const formatFileSize = (bytes: number) => {
+    if (bytes === 0) return "0 Bytes"
+    const k = 1024
+    const sizes = ["Bytes", "KB", "MB", "GB"]
+    const i = Math.floor(Math.log(bytes) / Math.log(k))
+    return Number.parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i]
+  }
+
   const isAssignmentSelected = (courseId: string, index: number) => {
     return appState.selectedAssignments.some((a) => a.courseId === courseId && a.index === index)
   }
@@ -85,7 +135,8 @@ export function AssignmentSelectionStep({ appState, updateState }: AssignmentSel
   }
 
   return (
-    <div className="max-w-6xl mx-auto">
+    <div className="max-w-6xl mx-auto space-y-6">
+      {/* Assignment Selection Card */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
@@ -204,7 +255,7 @@ export function AssignmentSelectionStep({ appState, updateState }: AssignmentSel
               {appState.loading ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Starting Generation...
+                  Generating...
                 </>
               ) : (
                 <>
@@ -216,6 +267,94 @@ export function AssignmentSelectionStep({ appState, updateState }: AssignmentSel
           </div>
         </CardContent>
       </Card>
+
+      {/* Document Generation Progress */}
+      {appState.docJobId && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              {appState.docProgress >= 100 ? (
+                <CheckCircle className="w-5 h-5 text-green-500" />
+              ) : (
+                <Loader2 className="w-5 h-5 animate-spin" />
+              )}
+              <span>{appState.docProgress >= 100 ? "Documents Generated!" : "Generating Documents..."}</span>
+            </CardTitle>
+            <CardDescription>Processing {appState.selectedAssignments.length} selected assignments</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm text-muted-foreground">Progress</span>
+                  <span className="text-sm text-muted-foreground">{appState.docProgress}%</span>
+                </div>
+                <Progress value={appState.docProgress} className="h-3" />
+              </div>
+
+              {appState.docProgress >= 100 && (
+                <div className="flex items-center space-x-2">
+                  <Badge variant="outline" className="text-green-600 border-green-600">
+                    <CheckCircle className="w-3 h-3 mr-1" />
+                    Completed
+                  </Badge>
+                  <span className="text-sm text-muted-foreground">Documents are ready for download</span>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Generated Documents Download */}
+      {appState.generatedFiles && appState.generatedFiles.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <Download className="w-5 h-5 text-green-600" />
+              <span>Download Generated Documents</span>
+            </CardTitle>
+            <CardDescription>{appState.generatedFiles.length} documents ready for download</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {appState.generatedFiles.map((file: any, index: number) => (
+                <div key={index} className="flex items-center justify-between p-4 border rounded-lg bg-card/50">
+                  <div className="flex-1">
+                    <h4 className="font-medium">{file.assignmentTitle}</h4>
+                    <div className="flex items-center space-x-4 mt-1 text-sm text-muted-foreground">
+                      <span>{file.fileName}</span>
+                      <span>{formatFileSize(file.fileSize)}</span>
+                    </div>
+                  </div>
+                  <Button
+                    onClick={() => handleDownload(file.downloadUrl, file.fileName)}
+                    className="bg-green-600 hover:bg-green-700"
+                  >
+                    <Download className="w-4 h-4 mr-2" />
+                    Download
+                  </Button>
+                </div>
+              ))}
+            </div>
+
+            <Separator className="my-4" />
+
+            <div className="flex justify-center">
+              <Button
+                onClick={() => {
+                  appState.generatedFiles?.forEach((file: any) => handleDownload(file.downloadUrl, file.fileName))
+                }}
+                variant="outline"
+                size="lg"
+              >
+                <Download className="w-4 h-4 mr-2" />
+                Download All Documents
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   )
 }

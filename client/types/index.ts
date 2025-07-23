@@ -85,4 +85,5 @@ export interface AppState {
   selectedAssignments: Assignment[]
   docJobId: string
   docProgress: number
+  generatedFiles?: GeneratedFile[]
 }

@@ -3,11 +3,10 @@
 import { useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
-import { BookOpen, Clock, Loader2 } from "lucide-react"
+import { BookOpen, Clock, Loader2, ArrowRight, CheckCircle } from "lucide-react"
 import type { AppState } from "@/types"
 import { useApi } from "@/hooks/use-api"
 
@@ -62,7 +61,7 @@ export function CourseSelectionStep({ appState, updateState }: CourseSelectionSt
       return
     }
 
-    updateState({ loading: true, error: "" })
+    updateState({ loading: true, error: "", success: "" })
 
     try {
       const data = await checkAssignments({
@@ -88,68 +87,130 @@ export function CourseSelectionStep({ appState, updateState }: CourseSelectionSt
     const newSelection = checked
       ? [...appState.selectedCourses, courseId]
       : appState.selectedCourses.filter((id) => id !== courseId)
-
     updateState({ selectedCourses: newSelection })
   }
 
+  // Handle clicking on the entire card
+  const handleCardClick = (courseId: string) => {
+    const isSelected = appState.selectedCourses.includes(courseId)
+    handleCourseSelection(courseId, !isSelected)
+  }
+
   return (
-    <div className="max-w-4xl mx-auto">
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <BookOpen className="w-5 h-5" />
-            <span>Select Courses</span>
+    <div className="max-w-4xl mx-auto space-y-8">
+      {/* Course Selection Card */}
+      <Card className="bg-gray-900/50 border-gray-800 shadow-2xl backdrop-blur-sm">
+        <CardHeader className="text-center">
+          <CardTitle className="text-3xl font-bold text-white flex items-center justify-center space-x-3">
+            <BookOpen className="h-8 w-8 text-blue-400" />
+            <span>Select Your Courses</span>
           </CardTitle>
-          <CardDescription>Choose courses to check for pending assignments</CardDescription>
+          <CardDescription className="text-gray-400 text-lg">
+            Choose courses to check for pending assignments
+          </CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+        
+        <CardContent className="space-y-6">
+          <div className="grid gap-4">
             {appState.courses.map((course) => (
-              <div key={course.id} className="flex items-center space-x-3 p-3 rounded-lg border bg-card/50">
-                <Checkbox
-                  id={course.id}
-                  checked={appState.selectedCourses.includes(course.id)}
-                  onCheckedChange={(checked) => handleCourseSelection(course.id, !!checked)}
-                />
-                <Label htmlFor={course.id} className="flex-1 cursor-pointer">
-                  <div className="font-medium">{course.name}</div>
-                  <div className="text-sm text-muted-foreground">ID: {course.id}</div>
-                </Label>
-              </div>
+              <Card 
+                key={course.id} 
+                className={`transition-all duration-200 hover:shadow-lg cursor-pointer border-2 ${
+                  appState.selectedCourses.includes(course.id) 
+                    ? 'border-blue-500 bg-blue-950/30 shadow-blue-500/10' 
+                    : 'border-gray-700 bg-gray-800/30 hover:border-gray-600 hover:bg-gray-800/50'
+                }`}
+                onClick={() => handleCardClick(course.id)}
+              >
+                <CardContent className="p-6">
+                  <div className="flex items-start space-x-4">
+                    <Checkbox
+                      checked={appState.selectedCourses.includes(course.id)}
+                      onCheckedChange={(checked) => handleCourseSelection(course.id, !!checked)}
+                      onClick={(e) => e.stopPropagation()} // Prevent double-click when clicking checkbox
+                      className="mt-1 border-gray-500 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
+                    />
+                    
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-lg font-semibold text-white mb-2 leading-tight">
+                        {course.title?.replace(/\n\s*/g, ' ').trim() || course.name}
+                      </h3>
+                      <div className="flex items-center space-x-4 text-sm">
+                        <Badge variant="secondary" className="bg-gray-700 text-gray-200 border-gray-600 px-3 py-1">
+                          ID: {course.id}
+                        </Badge>
+                        <div className="flex items-center text-gray-400">
+                          <Clock className="h-4 w-4 mr-1" />
+                          Active Course
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             ))}
           </div>
 
-          {appState.checkJobId && (
-            <div className="mb-6">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-muted-foreground">Checking assignments...</span>
-                <span className="text-sm text-muted-foreground">{appState.checkProgress}%</span>
-              </div>
-              <Progress value={appState.checkProgress} className="h-2" />
+          {/* Selection Summary & Action */}
+          <div className="flex items-center justify-between pt-6 border-t border-gray-700">
+            <div className="flex items-center space-x-4">
+              <Badge variant="outline" className="border-gray-600 text-gray-300 px-3 py-1">
+                {appState.selectedCourses.length} of {appState.courses.length} courses selected
+              </Badge>
             </div>
-          )}
-
-          <div className="flex justify-between">
-            <Badge variant="outline">{appState.selectedCourses.length} courses selected</Badge>
-            <Button
+            
+            <Button 
               onClick={handleAssignmentCheck}
               disabled={appState.loading || appState.selectedCourses.length === 0}
+              size="lg"
+              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 px-8 shadow-lg shadow-blue-500/25"
             >
               {appState.loading ? (
                 <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Checking...
                 </>
               ) : (
                 <>
-                  <Clock className="w-4 h-4 mr-2" />
                   Check Assignments
+                  <ArrowRight className="ml-2 h-4 w-4" />
                 </>
               )}
             </Button>
           </div>
         </CardContent>
       </Card>
+
+      {/* Progress Section */}
+      {appState.checkJobId && (
+        <Card className="bg-blue-950/20 border-blue-600/50 backdrop-blur-sm">
+          <CardContent className="p-8">
+            <div className="flex items-center space-x-3 mb-6">
+              {appState.checkProgress >= 100 ? (
+                <CheckCircle className="h-6 w-6 text-green-400" />
+              ) : (
+                <Loader2 className="h-6 w-6 animate-spin text-blue-400" />
+              )}
+              <div>
+                <h3 className="text-xl font-semibold text-white">
+                  {appState.checkProgress >= 100 ? "Assignment Check Complete!" : "Checking assignments..."}
+                </h3>
+                <p className="text-blue-200">
+                  Processing {appState.selectedCourses.length} selected courses
+                </p>
+              </div>
+            </div>
+            
+            <div className="space-y-3">
+              <div className="flex justify-between text-sm font-medium text-blue-200">
+                <span>Progress</span>
+                <span>{appState.checkProgress}%</span>
+              </div>
+              <Progress value={appState.checkProgress} className="h-3" />
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   )
 }

@@ -6,6 +6,8 @@ export interface Credentials {
 export interface Course {
   id: string
   name: string
+  title?: string  // Added to support API response
+  url?: string
 }
 
 export interface RelatedFile {

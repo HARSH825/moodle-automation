@@ -1,7 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { GraduationCap, Settings } from "lucide-react"
+import { GraduationCap, RotateCcw } from "lucide-react"
 
 interface HeaderProps {
   currentStep: number
@@ -10,26 +10,31 @@ interface HeaderProps {
 
 export function Header({ currentStep, onReset }: HeaderProps) {
   return (
-    <div className="border-b bg-card/50 backdrop-blur-sm">
-      <div className="container mx-auto px-4 py-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="p-2 bg-primary rounded-lg">
-              <GraduationCap className="w-6 h-6 text-primary-foreground" />
-            </div>
-            <div>
-              <h1 className="text-xl font-bold">Moodle Assistant</h1>
-              <p className="text-sm text-muted-foreground">Assignment Management System</p>
-            </div>
+    <header className="border-b border-gray-800 bg-black/90 backdrop-blur-sm sticky top-0 z-50">
+      <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+        <div className="flex items-center space-x-3">
+          <div className="p-2 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg">
+            <GraduationCap className="h-6 w-6 text-white" />
           </div>
-          {currentStep > 1 && (
-            <Button variant="outline" onClick={onReset}>
-              <Settings className="w-4 h-4 mr-2" />
-              Reset
-            </Button>
-          )}
+          <div>
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+              Moodle Assistant
+            </h1>
+            <p className="text-sm text-gray-400">Assignment Management System</p>
+          </div>
         </div>
+        
+        {currentStep > 1 && (
+          <Button 
+            variant="outline" 
+            onClick={onReset}
+            className="border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white hover:border-gray-600"
+          >
+            <RotateCcw className="h-4 w-4 mr-2" />
+            Reset
+          </Button>
+        )}
       </div>
-    </div>
+    </header>
   )
 }

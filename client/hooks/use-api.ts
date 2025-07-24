@@ -1,6 +1,6 @@
 import type { Credentials, Assignment } from "@/types"
 
-const API_BASE = "http://localhost:4000"
+const API_BASE = "https://api.moodle.harshdev.cloud"
 
 export function useApi() {
   const login = async (credentials: Credentials) => {

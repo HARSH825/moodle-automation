@@ -1,7 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { GraduationCap, ArrowLeft } from "lucide-react"
+import { Triangle, ArrowLeft } from "lucide-react"
 import { useRouter } from "next/navigation"
 
 interface PageHeaderProps {
@@ -39,11 +39,11 @@ export function PageHeader({
         
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="p-2 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg">
-              <GraduationCap className="h-6 w-6 text-white" />
+            <div className="p-2 bg-black rounded-lg">
+              <Triangle className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+              <h1 className="text-2xl font-bold text-white bg-clip-text text-transparent">
                 {title}
               </h1>
               <p className="text-sm text-gray-400">{subtitle}</p>

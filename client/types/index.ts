@@ -30,7 +30,7 @@ export interface Assignment {
 export interface CourseAssignments {
   courseUrl: string
   assignments: Assignment[]
-  courseTitle: string
+  title: string
   nonSubmittedCount: number
 }
 

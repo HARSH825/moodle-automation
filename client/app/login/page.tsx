@@ -30,9 +30,8 @@ export default function LoginPage() {
     try {
       const data = await login(credentials)
       if (data.success) {
-        // Store data for next steps
         storage.set(STORAGE_KEYS.COURSES, data.courses)
-        storage.set(STORAGE_KEYS.CREDENTIALS, credentials)
+        storage.set(STORAGE_KEYS.CREDENTIALS, credentials)  //browser storage
         
         setSuccess("Login successful! Redirecting to course selection...")
         setTimeout(() => router.push('/courses'), 1500)
@@ -64,7 +63,7 @@ export default function LoginPage() {
                 <Shield className="h-8 w-8 text-white" />
               </div>
               <CardTitle className="text-2xl font-bold text-white">
-                Welcome Back
+                SPIT 
               </CardTitle>
               <CardDescription className="text-gray-400 text-base">
                 Enter your Moodle credentials to access your courses and assignments
@@ -114,7 +113,7 @@ export default function LoginPage() {
                 <Button 
                   type="submit" 
                   disabled={loading}
-                  className="w-full h-12 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold text-base shadow-lg shadow-blue-500/25"
+                  className="cursor-pointer w-full h-12 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold text-base shadow-lg shadow-blue-500/25"
                 >
                   {loading ? (
                     <>
@@ -130,7 +129,7 @@ export default function LoginPage() {
               <div className="text-center text-sm text-gray-500 pt-4 border-t border-gray-800">
                 <div className="flex items-center justify-center space-x-2">
                   <Shield className="h-4 w-4" />
-                  <span>Your credentials are securely encrypted and never stored</span>
+                  <span>Your credentials are securely encrypted and <p className="font-bold text-white">never stored</p></span>
                 </div>
               </div>
             </CardContent>

@@ -2,8 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { GraduationCap, BookOpen, FileText, Download, ArrowRight, CheckCircle, Users, Clock, Zap, Shield } from "lucide-react"
+import { Triangle, BookOpen, FileText, Download, Users, Clock, Zap, Shield, CheckCircle, ArrowRight } from "lucide-react"
 import { useRouter } from "next/navigation"
 
 export default function LandingPage() {
@@ -11,9 +10,9 @@ export default function LandingPage() {
 
   const features = [
     {
-      icon: <GraduationCap className="h-8 w-8 text-blue-400" />,
+      icon: <Triangle className="h-8 w-8 text-blue-400" />,
       title: "Moodle Integration",
-      description: "Seamlessly connect with your Moodle account to access all your courses and assignments."
+      description: "Seamlessly connect to your Moodle account to access courses, assignments, and even related faculty-uploaded files."
     },
     {
       icon: <BookOpen className="h-8 w-8 text-green-400" />,
@@ -32,25 +31,18 @@ export default function LandingPage() {
     }
   ]
 
-  const stats = [
-    { label: "Active Users", value: "2,500+", icon: <Users className="h-5 w-5" /> },
-    { label: "Assignments Processed", value: "15,000+", icon: <FileText className="h-5 w-5" /> },
-    { label: "Documents Generated", value: "8,500+", icon: <Download className="h-5 w-5" /> },
-    { label: "Average Time Saved", value: "4+ hrs", icon: <Clock className="h-5 w-5" /> }
-  ]
-
   return (
     <div className="min-h-screen bg-black">
       {/* Header */}
       <header className="border-b border-gray-800 bg-black/90 backdrop-blur-sm sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="p-2 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg">
-              <GraduationCap className="h-6 w-6 text-white" />
+            <div className="p-2 bg-gradient-to-r text-white rounded-lg">
+              <Triangle className="h-6 w-6 text-white" />
             </div>
             <div>
-              <span className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                Moodle Assistant
+              <span className="text-2xl font-bold bg-gradient-to-r text-white bg-clip-text text-transparent">
+                Moodle automation
               </span>
               <p className="text-xs text-gray-400">Smart Assignment Management</p>
             </div>
@@ -67,11 +59,6 @@ export default function LandingPage() {
       {/* Hero Section */}
       <section className="container mx-auto px-4 py-20 text-center">
         <div className="max-w-4xl mx-auto">
-          <Badge variant="secondary" className="mb-6 px-4 py-2 text-sm bg-gray-800 text-gray-200 border-gray-700">
-            <CheckCircle className="h-4 w-4 mr-2 text-green-400" />
-            Trusted by thousands of students worldwide
-          </Badge>
-          
           <h1 className="text-6xl md:text-7xl font-bold mb-8 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent leading-tight">
             Streamline Your
             <br />
@@ -82,7 +69,7 @@ export default function LandingPage() {
           
           <p className="text-xl text-gray-300 mb-10 leading-relaxed max-w-3xl mx-auto">
             Automatically check for pending assignments, generate professional documents, 
-            and manage your academic workflow with our intelligent Moodle assistant.
+            and manage your academic workflow with intelligent automation flow.
             <span className="block mt-2 text-gray-400">Save hours of manual work every week.</span>
           </p>
           
@@ -90,68 +77,36 @@ export default function LandingPage() {
             <Button 
               size="lg" 
               onClick={() => router.push('/login')}
-              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 px-10 py-4 text-lg font-semibold shadow-lg shadow-blue-500/25 h-14"
+              className="cursor-pointer bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 px-10 py-4 text-lg font-semibold shadow-lg shadow-blue-500/25 h-14"
             >
               <Zap className="mr-2 h-5 w-5" />
-              Start Managing Assignments
+              Start Now
               <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
+            </Button> 
             <Button 
               size="lg" 
               variant="outline" 
-              className="px-10 py-4 text-lg border-2 border-gray-600 text-gray-200 hover:bg-gray-800 hover:text-white hover:border-gray-500 h-14"
+              className="cursor-pointer px-10 py-4 text-lg border-2 bg-gray-800 border-gray-600 text-gray-200 hover:bg-gray-800 hover:text-white hover:border-gray-500 h-14"
             >
               Watch Demo
             </Button>
+            <Button 
+              size="lg"
+              variant="outline"
+              className="cursor-pointer px-10 py-4 text-lg border-2 bg-gray-800 border-gray-600 text-gray-200 hover:bg-gray-800 hover:text-white hover:border-gray-500 h-14"
+            >
+              Architecture and Documentation
+            </Button>
           </div>
-
-          {/* Quick Preview */}
-          <div className="bg-gradient-to-r from-gray-800/50 to-gray-900/50 rounded-2xl p-8 border border-gray-700 backdrop-blur-sm">
-            <h3 className="text-2xl font-bold text-white mb-4">How It Works</h3>
-            <div className="grid md:grid-cols-3 gap-6">
-              {[
-                { step: "01", title: "Connect Moodle", desc: "Login with your credentials" },
-                { step: "02", title: "Select Courses", desc: "Choose courses to check" },
-                { step: "03", title: "Generate Docs", desc: "Download professional documents" }
-              ].map((item, index) => (
-                <div key={index} className="text-center">
-                  <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full flex items-center justify-center text-sm font-bold mb-3 mx-auto">
-                    {item.step}
-                  </div>
-                  <h4 className="text-lg font-semibold text-white mb-1">{item.title}</h4>
-                  <p className="text-gray-400 text-sm">{item.desc}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Stats Section */}
-      <section className="container mx-auto px-4 py-16 border-t border-gray-800">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-          {stats.map((stat, index) => (
-            <Card key={index} className="bg-gray-900/50 border-gray-800 text-center hover:bg-gray-800/50 transition-all">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-center mb-3 text-blue-400">
-                  {stat.icon}
-                </div>
-                <div className="text-3xl font-bold text-white mb-2">{stat.value}</div>
-                <div className="text-gray-400 text-sm">{stat.label}</div>
-              </CardContent>
-            </Card>
-          ))}
         </div>
       </section>
 
       {/* Features Section */}
       <section className="container mx-auto px-4 py-20">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold mb-4 text-white">
-            Everything You Need to Succeed
-          </h2>
+          <h2 className="text-4xl font-bold mb-4 text-white">How it works?</h2>
           <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-            Our comprehensive suite of tools helps you stay organized and productive throughout your academic journey.
+            These tools automate your workflow, helping you stay organized and productive throughout your academic journey.
           </p>
         </div>
         
@@ -175,8 +130,8 @@ export default function LandingPage() {
       {/* Benefits Section */}
       <section className="container mx-auto px-4 py-20 bg-gradient-to-r from-gray-900/50 to-black/50 rounded-3xl mx-4 border border-gray-800">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold mb-4 text-white">Why Choose Moodle Assistant?</h2>
-          <p className="text-xl text-gray-400">Designed by students, for students</p>
+          <h2 className="text-4xl font-bold mb-4 text-white">Why Choose Moodle automation?</h2>
+          <p className="text-xl text-gray-400">Designed by a student, for students</p>
         </div>
         
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
@@ -205,22 +160,22 @@ export default function LandingPage() {
           <CardContent className="py-16">
             <h2 className="text-4xl font-bold mb-4 text-white">Ready to Transform Your Workflow?</h2>
             <p className="text-xl mb-8 text-gray-300">
-              Join thousands of students who are already saving hours every week.
+              Join students already saving hours weekly—instead focus on what truly matters 
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button 
                 size="lg" 
                 onClick={() => router.push('/login')}
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 px-10 py-4 text-lg font-semibold shadow-lg shadow-blue-500/25"
+                className="cursor-pointer bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 px-10 py-4 text-lg font-semibold shadow-lg shadow-blue-500/25"
               >
                 <Zap className="mr-2 h-5 w-5" />
-                Start Your Free Trial
+                Start Now
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
               <Button 
                 size="lg" 
                 variant="outline"
-                className="px-10 py-4 text-lg border-2 border-gray-600 text-gray-200 hover:bg-gray-800 hover:text-white hover:border-gray-500"
+                className="cursor-pointer px-10 py-4 text-lg border-2 border-gray-600 text-gray-200 bg-gray-800 hover:text-white hover:border-gray-500 hover:bg-gray-800"
               >
                 Learn More
               </Button>
@@ -234,15 +189,40 @@ export default function LandingPage() {
         <div className="container mx-auto px-4 py-12">
           <div className="text-center">
             <div className="flex items-center justify-center space-x-3 mb-4">
-              <div className="p-2 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg">
-                <GraduationCap className="h-6 w-6 text-white" />
+              <div className="p-2 bg-gradient-to-r text-white rounded-lg">
+                <Triangle className="h-6 w-6 text-white" />
               </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                Moodle Assistant
+              <span className="text-xl font-bold bg-gradient-to-r text-white bg-clip-text text-transparent">
+                Moodle automation
               </span>
             </div>
-            <p className="text-gray-500 mb-4">Making academic life easier, one assignment at a time.</p>
-            <p className="text-gray-600 text-sm">&copy; 2025 Moodle Assistant. All rights reserved.</p>
+            <p className="text-gray-500 mb-4">Making academic life easier, saving hours of manual work.</p>
+  
+
+            {/* GitHub Icon */}
+            <a
+              href="https://github.com/HARSH825"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex justify-center mt-4 hover:text-white"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 16 16"
+                fill="currentColor"
+                className="w-6 h-6 text-gray-500 hover:text-white transition-colors"
+              >
+                <path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 005.47 7.59c.4.07.55-.17.55-.38 
+                0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52
+                -.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2
+                -3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 
+                0 0 .67-.21 2.2.82a7.66 7.66 0 012-.27c.68 0 1.36.09 2 .27 1.53-1.04 
+                2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 
+                2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 
+                0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0016 
+                8c0-4.42-3.58-8-8-8z"/>
+              </svg>
+            </a>
           </div>
         </div>
       </footer>

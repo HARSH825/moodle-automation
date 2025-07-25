@@ -1,22 +1,21 @@
 import Queue from 'bull';
 import { redisclient } from '../config/redis.js';
 
-// assignment checking queue 
 export const assignmentCheckQueue = new Queue('assignment check', {
-    
-    redis: {
-        port: process.env.REDIS_PORT,
-        host: process.env.REDIS_HOST,
-        password: process.env.REDIS_PASSWORD
-    },
-    defaultJobOptions: {
-        removeOnComplete: 10,
-        removeOnFail: 5,
-        attempts: 2,
-        backoff: 'exponential',
-        delay: 0
-    }
+  redis: {
+    port: process.env.REDIS_PORT,
+    host: process.env.REDIS_HOST,
+    password: process.env.REDIS_PASSWORD
+  },
+  defaultJobOptions: {
+    removeOnComplete: 10,
+    removeOnFail: 5,
+    attempts: 2,
+    backoff: 'exponential',
+    delay: 0
+  }
 });
+
 
 //  event handlers
 assignmentCheckQueue.on('completed', (job) => {

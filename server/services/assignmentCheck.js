@@ -263,8 +263,6 @@ async function processAssignmentCheck(job) {
     }
 }
 
-// queue processor
-assignmentCheckQueue.process('check-assignments', 2, processAssignmentCheck);
-
-console.log(' Assignment check worker initialized');
+assignmentCheckQueue.process('check-assignments', 10, processAssignmentCheck);
+console.log('Assignment check worker initialized (parallel, concurrency: 10)');
 

@@ -26,12 +26,23 @@ function createParagraphsFromText(text) {
         return [new Paragraph("No content available.")];
     }
 
-    return text.split("\n").filter(Boolean).map(line =>
-        new Paragraph({
-            children: parseMarkdownToTextRuns(line.trim()),
-            spacing: { before: 200, after: 100 },
-        })
-    );
+    return text
+        .split("\n")
+        .filter(Boolean)
+        .map(rawLine => {
+            const line = rawLine.trim();
+            const isBullet = /^\*\s+/.test(line);
+
+            const content = isBullet
+                ? line.replace(/^\*\s+/, "") // remove the bullet marker
+                : line;
+
+            return new Paragraph({
+                bullet: isBullet ? { level: 0 } : undefined,
+                children: parseMarkdownToTextRuns(content),
+                spacing: { before: 200, after: 100 },
+            });
+        });
 }
 
 export default createParagraphsFromText;
